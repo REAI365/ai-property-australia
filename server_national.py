@@ -85,11 +85,7 @@ Summarize in professional, investor-friendly language.
 """
 
 
-- Estimated current value: {est['estimated']}
-- Expected annual growth (%): {est['growth_pct']}
-- Gross rental yield (%): {est['gross_yield_pct']}
-- Projected 5-year price: {est['projected_price_5yr']}
-End with a one-line recommended action for an investor.\"\"\"
+
     try:
         resp = openai.ChatCompletion.create(
             model='gpt-4o-mini',
