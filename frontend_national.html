@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>AI Property Intelligence — Australia</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    body{font-family: Arial, sans-serif; margin:20px; background:#f7f9fc;}
+    .card{background:white;padding:16px;border-radius:8px;box-shadow:0 2px 6px rgba(0,0,0,0.08);margin-bottom:16px;}
+    input, select{padding:8px;width:100%;box-sizing:border-box;margin-top:4px;}
+    button{padding:10px 16px;margin-top:12px;background:#1f7ae0;color:white;border:none;border-radius:6px;cursor:pointer;}
+    .result{margin-top:12px;padding:12px;background:#eef6ff;border-radius:6px;}
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>AI Property Intelligence — Australia</h1>
+    <p>Prototype front-end for nationwide estimates. This will call your deployed backend's /api/value-estimate endpoint.</p>
+  </div>
+  <div class="card">
+    <label>Suburb</label>
+    <input id="suburb" placeholder="e.g., Blacktown">
+    <label>State (e.g., NSW, VIC)</label>
+    <input id="state" placeholder="NSW">
+    <label>Property Type</label>
+    <select id="ptype"><option>House</option><option>Unit</option><option>Townhouse</option></select>
+    <label>Bedrooms</label>
+    <input id="beds" type="number" value="3">
+    <button id="estimateBtn">Get Nationwide Estimate</button>
+    <div id="result" class="result" style="display:none;"></div>
+    <p>Note: Configure BACKEND_URL in the script below to point to your deployed backend.</p>
+  </div>
+
+<script>
+const BACKEND_URL = '' // e.g. 'https://your-app.onrender.com'
+
+document.getElementById('estimateBtn').onclick = async ()=>{
+  const suburb = document.getElementById('suburb').value.trim();
+  const state = document.getElementById('state').value.trim().toUpperCase();
+  const ptype = document.getElementById('ptype').value;
+  const beds = document.getElementById('beds').value;
+  if(!BACKEND_URL){ alert('Set BACKEND_URL in the script to your deployed backend URL.'); return; }
+  const url = `${BACKEND_URL}/api/value-estimate?suburb=${encodeURIComponent(suburb)}&state=${encodeURIComponent(state)}&type=${encodeURIComponent(ptype)}&beds=${encodeURIComponent(beds)}`;
+  document.getElementById('result').style.display='block';
+  document.getElementById('result').innerText = 'Loading...';
+  try{
+    const res = await fetch(url);
+    const data = await res.json();
+    document.getElementById('result').innerHTML = `<strong>${data.suburb}, ${data.state}</strong><br>
+      Est: $${data.estimate.estimated.toLocaleString()}<br>
+      Growth: ${data.estimate.growth_pct}% p.a.<br>
+      Yield: ${data.estimate.gross_yield_pct}%<br><br>
+      <em>AI summary:</em><br>${data.ai_summary}`;
+  }catch(err){
+    document.getElementById('result').innerText = 'Error fetching estimate: ' + err;
+  }
+}
+</script>
+</body>
+</html>
