@@ -75,11 +75,11 @@ def generate_ai_summary(suburb, state, est):
     prompt = f"""
 You are a senior Australian property analyst. Provide a concise (3–4 sentence) investment summary for {suburb}, {state} given:
 
-- Estimated current value: {est['estimated']}
-- Median rent: {est['rent']}
-- 12-month growth: {est['growth']}
-- Demand rating: {est['demand']}
-- Investor interest level: {est['interest']}
+- Estimated current value: {est["estimated"]}
+- Median rent: {est["rent"]}
+- 12-month growth: {est["growth"]}
+- Demand rating: {est["demand"]}
+- Investor interest level: {est["interest"]}
 
 Summarize in professional, investor-friendly language.
 """
