@@ -15,6 +15,18 @@ else:
 app = Flask(__name__)
 CORS(app)
 
+import os
+
+# Test if Render can see your OpenAI key
+key = os.getenv("OPENAI_API_KEY")
+print("DEBUG: OPENAI_API_KEY visible to app ->", "YES" if key else "NO")
+
+if not key:
+    raise RuntimeError("Environment variable OPENAI_API_KEY is missing! Check Render settings.")
+
+from openai import OpenAI
+client = OpenAI(api_key=key)
+
 # Initialize OpenAI client
 client = OpenAI(api_key=api_key)
 
