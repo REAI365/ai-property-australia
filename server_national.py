@@ -74,13 +74,16 @@ def simple_estimate(suburb, state='NSW', ptype='House', beds=3, weekly_rent=None
 def generate_ai_summary(suburb, state, est):
     prompt = f"""
 You are a senior Australian property analyst. Provide a concise (3–4 sentence) investment summary for {suburb}, {state} given:
-- Current median property price
-- Rental yield trends
-- Infrastructure or development projects nearby
-- Investment demand level
-- Population growth
+
+- Estimated current value: {est['estimated']}
+- Median rent: {est['rent']}
+- 12-month growth: {est['growth']}
+- Demand rating: {est['demand']}
+- Investor interest level: {est['interest']}
+
 Summarize in professional, investor-friendly language.
 """
+
 
 - Estimated current value: {est['estimated']}
 - Expected annual growth (%): {est['growth_pct']}
