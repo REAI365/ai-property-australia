@@ -1,17 +1,22 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 import os
-import os
-print("OPENAI_API_KEY from env:", os.getenv("OPENAI_API_KEY"))
-
 from openai import OpenAI
+
+# Debug print to confirm if environment variable is detected
+print("🔍 Checking OpenAI key in environment...")
+api_key = os.getenv("OPENAI_API_KEY")
+if api_key:
+    print("✅ OPENAI_API_KEY found.")
+else:
+    print("❌ OPENAI_API_KEY is missing. Please set it in Render Environment Variables.")
 
 # Initialize app
 app = Flask(__name__)
 CORS(app)
 
-# Initialize OpenAI client using environment variable
-client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+# Initialize OpenAI client
+client = OpenAI(api_key=api_key)
 
 @app.route("/")
 def home():
@@ -20,7 +25,7 @@ def home():
 @app.route("/analyze", methods=["POST"])
 def analyze():
     try:
-        data = request.json
+        data = request.json or {}
         suburb = data.get("suburb", "Sydney")
         state = data.get("state", "NSW")
         est = data.get("estimates", {
@@ -31,7 +36,6 @@ def analyze():
             "interest": "Investor Hotspot"
         })
 
-        # Build AI prompt
         prompt = f"""
 You are a senior Australian property analyst. Provide a concise (3–4 sentence) investment summary for {suburb}, {state} given:
 
@@ -44,7 +48,7 @@ You are a senior Australian property analyst. Provide a concise (3–4 sentence)
 Summarize in professional, investor-friendly language.
 """
 
-        # Call OpenAI
+        # Call OpenAI API
         response = client.chat.completions.create(
             model="gpt-4o-mini",
             messages=[{"role": "user", "content": prompt}],
@@ -57,6 +61,7 @@ Summarize in professional, investor-friendly language.
 
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
