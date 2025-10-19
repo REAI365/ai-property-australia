@@ -72,7 +72,7 @@ def simple_estimate(suburb, state='NSW', ptype='House', beds=3, weekly_rent=None
 
 # OpenAI summary generator
 def generate_ai_summary(suburb, state, est):
-    prompt = f\"\"\"You are a senior Australian property analyst. Provide a concise (3-4 sentence) investment summary for {suburb}, {state} given:
+    prompt = f"""You are a senior Australian property analyst. Provide a concise (3-4 sentence) investment summary for {suburb}, {state} given:
 - Estimated current value: {est['estimated']}
 - Expected annual growth (%): {est['growth_pct']}
 - Gross rental yield (%): {est['gross_yield_pct']}
