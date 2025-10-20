@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI Property Analyzer 🇦🇺</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f6f8;
+      color: #333;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      height: 100vh;
+      margin: 0;
+      padding: 30px;
+    }
+    h1 {
+      color: #0057b7;
+    }
+    form {
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      width: 90%;
+      max-width: 400px;
+      margin-top: 20px;
+    }
+    input, button {
+      width: 100%;
+      padding: 10px;
+      margin: 8px 0;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+    }
+    button {
+      background: #0077ff;
+      color: white;
+      border: none;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #005ec7;
+    }
+    #result {
+      margin-top: 20px;
+      padding: 20px;
+      background: #fff;
+      border-radius: 10px;
+      width: 90%;
+      max-width: 600px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <h1>🏡 AI Property Analyzer</h1>
+  <form id="analyzeForm">
+    <input type="text" id="suburb" placeholder="Suburb (e.g. Clyde)" required />
+    <input type="text" id="state" placeholder="State (e.g. VIC)" required />
+    <button type="submit">Analyze Property</button>
+  </form>
+  <div id="result"></div>
+
+  <script>
+    const form = document.getElementById("analyzeForm");
+    const resultDiv = document.getElementById("result");
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const suburb = document.getElementById("suburb").value;
+      const state = document.getElementById("state").value;
+
+      resultDiv.style.display = "block";
+      resultDiv.innerHTML = "🔍 Analyzing property data...";
+
+      try {
+        const res = await fetch("https://ai-property-australia.onrender.com/analyze", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ suburb, state })
+        });
+
+        const data = await res.json();
+        if (data.summary) {
+          resultDiv.innerHTML = `<strong>AI Summary:</strong><br><br>${data.summary}`;
+        } else {
+          resultDiv.innerHTML = `<strong>Error:</strong> ${data.error || "Something went wrong"}`;
+        }
+      } catch (err) {
+        resultDiv.innerHTML = `<strong>Network Error:</strong> ${err.message}`;
+      }
+    });
+  </script>
+</body>
+</html>
