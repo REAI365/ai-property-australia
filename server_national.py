@@ -1,34 +1,28 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 import os
+import httpx
 from openai import OpenAI
 
-# Debug print to confirm if environment variable is detected
+# --- Debug info ---
 print("🔍 Checking OpenAI key in environment...")
-api_key = os.getenv("OPENAI_API_KEY")
-if api_key:
+key = os.getenv("OPENAI_API_KEY")
+
+if key:
     print("✅ OPENAI_API_KEY found.")
+    print("DEBUG: OPENAI_API_KEY visible to app -> YES")
 else:
     print("❌ OPENAI_API_KEY is missing. Please set it in Render Environment Variables.")
+    raise RuntimeError("Environment variable OPENAI_API_KEY is missing! Check Render settings.")
 
-# Initialize app
+print(f"DEBUG: httpx version -> {httpx.__version__}")
+
+# --- Initialize app ---
 app = Flask(__name__)
 CORS(app)
 
-import os
-
-# Test if Render can see your OpenAI key
-key = os.getenv("OPENAI_API_KEY")
-print("DEBUG: OPENAI_API_KEY visible to app ->", "YES" if key else "NO")
-
-if not key:
-    raise RuntimeError("Environment variable OPENAI_API_KEY is missing! Check Render settings.")
-
-from openai import OpenAI
+# --- Initialize OpenAI client ---
 client = OpenAI(api_key=key)
-
-# Initialize OpenAI client
-client = OpenAI(api_key=api_key)
 
 @app.route("/")
 def home():
@@ -48,6 +42,7 @@ def analyze():
             "interest": "Investor Hotspot"
         })
 
+        # --- Build AI prompt ---
         prompt = f"""
 You are a senior Australian property analyst. Provide a concise (3–4 sentence) investment summary for {suburb}, {state} given:
 
@@ -60,7 +55,7 @@ You are a senior Australian property analyst. Provide a concise (3–4 sentence)
 Summarize in professional, investor-friendly language.
 """
 
-        # Call OpenAI API
+        # --- Call OpenAI ---
         response = client.chat.completions.create(
             model="gpt-4o-mini",
             messages=[{"role": "user", "content": prompt}],
@@ -74,7 +69,7 @@ Summarize in professional, investor-friendly language.
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
-
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
+    print(f"🚀 Server running on port {port}...")
     app.run(host="0.0.0.0", port=port)
